@@ -2,8 +2,10 @@ package g
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/toolkits/file"
@@ -67,14 +69,43 @@ func Config() *GlobalConfig {
 }
 
 func Hostname() (string, error) {
+	debug := Config().Debug
 	hostname := Config().Hostname
 	if hostname != "" {
+		if debug {
+			log.Println("DEBUG: set hostname by cfg.json : ", hostname)
+		}
 		return hostname, nil
+	}
+
+	// use OS ENV ENDPOINT to overwrite hostname
+	if os.Getenv("ENDPOINT") != "" {
+		hostname = os.Getenv("ENDPOINT")
+		if debug {
+			log.Println("DEBUG: set hostname by OS ENV ENDPOINT : ", hostname)
+		}
+		return hostname, nil
+	}
+
+	// parse /etc/endpoint.env ( ENDPOINT=xxx_xxx_1.2.3.4 ) to overwrite hostname
+	filePath := "/etc/endpoint.env"
+	if _, err := os.Stat(filePath); err == nil {
+		data, _ := ioutil.ReadFile(filePath)
+		hostname = strings.TrimRight(strings.TrimRight(strings.TrimLeft(string(data), "ENDPOINT="), "\r"), "\n")
+		if len(hostname) > 0 {
+			if debug {
+				log.Println("DEBUG: set hostname by /etc/endpoint.env : ", hostname)
+			}
+			return hostname, nil
+		}
 	}
 
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Println("ERROR: os.Hostname() fail", err)
+	}
+	if debug {
+		log.Println("DEBUG: set hostname by os.Hostname() : ", hostname)
 	}
 	return hostname, err
 }

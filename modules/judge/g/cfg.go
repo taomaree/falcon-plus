@@ -2,9 +2,10 @@ package g
 
 import (
 	"encoding/json"
-	"github.com/toolkits/file"
 	"log"
 	"sync"
+
+	"github.com/toolkits/file"
 )
 
 type HttpConfig struct {
@@ -23,6 +24,15 @@ type HbsConfig struct {
 	Interval int64    `json:"interval"`
 }
 
+type DiscoveryConfig struct {
+	Enabled   bool     `json:"enabled"`
+	API       string   `json:"api"`
+	Endpoints []string `json:"endpoints"`
+	Metrics   []string `json:"metrics"`
+	Tags      []string `json:"tags"`
+	Timeout   int64    `json:"timeout"`
+}
+
 type RedisConfig struct {
 	Dsn          string `json:"dsn"`
 	MaxIdle      int    `json:"maxIdle"`
@@ -39,13 +49,14 @@ type AlarmConfig struct {
 }
 
 type GlobalConfig struct {
-	Debug     bool         `json:"debug"`
-	DebugHost string       `json:"debugHost"`
-	Remain    int          `json:"remain"`
-	Http      *HttpConfig  `json:"http"`
-	Rpc       *RpcConfig   `json:"rpc"`
-	Hbs       *HbsConfig   `json:"hbs"`
-	Alarm     *AlarmConfig `json:"alarm"`
+	Debug     bool             `json:"debug"`
+	DebugHost string           `json:"debugHost"`
+	Remain    int              `json:"remain"`
+	Http      *HttpConfig      `json:"http"`
+	Rpc       *RpcConfig       `json:"rpc"`
+	Hbs       *HbsConfig       `json:"hbs"`
+	Discovery *DiscoveryConfig `json:"discovery"`
+	Alarm     *AlarmConfig     `json:"alarm"`
 }
 
 var (

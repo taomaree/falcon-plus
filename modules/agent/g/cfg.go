@@ -2,8 +2,10 @@ package g
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/toolkits/file"
@@ -67,19 +69,29 @@ func Config() *GlobalConfig {
 }
 
 func Hostname() (string, error) {
+	debug := Config().Debug
 	hostname := Config().Hostname
 	if hostname != "" {
+		if debug {
+			log.Println("DEBUG: set hostname by cfg.json : ", hostname)
+		}
 		return hostname, nil
 	}
 
-	if os.Getenv("FALCON_ENDPOINT") != "" {
-		hostname = os.Getenv("FALCON_ENDPOINT")
+	if os.Getenv("ENDPOINT") != "" {
+		hostname = os.Getenv("ENDPOINT")
+		if debug {
+			log.Println("DEBUG: set hostname by OS ENV ENDPOINT : ", hostname)
+		}
 		return hostname, nil
 	}
 
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Println("ERROR: os.Hostname() fail", err)
+	}
+	if debug {
+		log.Println("DEBUG: set hostname by os.Hostname() : ", hostname)
 	}
 	return hostname, err
 }

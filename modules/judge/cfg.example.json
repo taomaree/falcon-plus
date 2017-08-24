@@ -1,7 +1,7 @@
 {
     "debug": true,
     "debugHost": "nil",
-    "remain": 11, 
+    "remain": 11,
     "http": {
         "enabled": true,
         "listen": "0.0.0.0:6081"
@@ -14,6 +14,14 @@
         "servers": ["127.0.0.1:6030"],
         "timeout": 300,
         "interval": 60
+    },
+    "discovery": {
+        "enabled": true,
+        "api": "http://127.0.0.1:6084",
+        "endpoints": ["basic", "php"],
+        "metrics": ["alive", "ss.timewait", "redis.redis_alive", "redis"],
+        "tags": ["nginx", "mysql", "mongodb", "redis"],
+        "timeout": 300
     },
     "alarm": {
         "enabled": true,

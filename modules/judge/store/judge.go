@@ -3,9 +3,10 @@ package store
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+
 	"github.com/open-falcon/falcon-plus/common/model"
 	"github.com/open-falcon/falcon-plus/modules/judge/g"
-	"log"
 )
 
 func Judge(L *SafeLinkedList, firstItem *model.JudgeItem, now int64) {
@@ -18,6 +19,12 @@ func CheckStrategy(L *SafeLinkedList, firstItem *model.JudgeItem, now int64) {
 	strategyMap := g.StrategyMap.Get()
 	strategies, exists := strategyMap[key]
 	if !exists {
+
+		// 没有对应的告警策略，调用自动发现逻辑
+		if g.Config().Discovery.Enabled {
+			Discovery(firstItem)
+		}
+
 		return
 	}
 

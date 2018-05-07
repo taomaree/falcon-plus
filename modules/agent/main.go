@@ -50,6 +50,7 @@ func main() {
 		g.InitLog("info")
 	}
 
+	os.Setenv("FALCON_AGENT_RUNTIME", g.VERSION)
 	g.InitRootDir()
 	g.InitLocalIp()
 	g.InitRpcClients()

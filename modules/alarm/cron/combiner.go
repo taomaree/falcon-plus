@@ -17,13 +17,14 @@ package cron
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+	"time"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/garyburd/redigo/redis"
 	"github.com/open-falcon/falcon-plus/modules/alarm/api"
 	"github.com/open-falcon/falcon-plus/modules/alarm/g"
 	"github.com/open-falcon/falcon-plus/modules/alarm/redi"
-	"strings"
-	"time"
 )
 
 func CombineSms() {
@@ -121,18 +122,23 @@ func combineIM() {
 		first := arr[0].Content
 		t := strings.Split(first, "][")
 		eg := ""
+		note := ""
 		if len(t) >= 3 {
 			eg = t[2]
+			note = t[4] + t[5]
 		}
 
 		path, err := api.LinkToSMS(content)
 		chat := ""
 		if err != nil || path == "" {
 			chat = fmt.Sprintf("[P%d][%s] %d %s.  e.g. %s. detail in email", arr[0].Priority, arr[0].Status, size, arr[0].Metric, eg)
+			chat = fmt.Sprintf("[P%d][%s] %d %s. %s  e.g. %s. detail in email", arr[0].Priority, arr[0].Status, size, arr[0].Metric, note, eg)
 			log.Error("create short link fail", err)
 		} else {
 			chat = fmt.Sprintf("[P%d][%s] %d %s e.g. %s %s/portal/links/%s ",
 				arr[0].Priority, arr[0].Status, size, arr[0].Metric, eg, g.Config().Api.Dashboard, path)
+			chat = fmt.Sprintf("[P%d][%s] %d %s %s e.g. %s %s/portal/links/%s ",
+				arr[0].Priority, arr[0].Status, size, arr[0].Metric, note, eg, g.Config().Api.Dashboard, path)
 			log.Debugf("combined im is:%s", chat)
 		}
 

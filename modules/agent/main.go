@@ -17,11 +17,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+
 	"github.com/open-falcon/falcon-plus/modules/agent/cron"
 	"github.com/open-falcon/falcon-plus/modules/agent/funcs"
 	"github.com/open-falcon/falcon-plus/modules/agent/g"
 	"github.com/open-falcon/falcon-plus/modules/agent/http"
-	"os"
 )
 
 func main() {
@@ -50,6 +51,7 @@ func main() {
 		g.InitLog("info")
 	}
 
+	os.Setenv("FALCON_AGENT_RUNTIME", g.VERSION)
 	g.InitRootDir()
 	g.InitLocalIp()
 	g.InitRpcClients()
@@ -65,6 +67,9 @@ func main() {
 	cron.Collect()
 
 	go http.Start()
+
+	hostname, _ := g.Hostname()
+	fmt.Println("hostname: ", hostname)
 
 	select {}
 

@@ -45,6 +45,7 @@ fmt-check:
 
 $(CMD):
 	go build -o bin/$@/falcon-$@ ./modules/$@
+	strip bin/$@/falcon-$@
 
 .PHONY: $(TARGET)
 $(TARGET): $(GOFILES)

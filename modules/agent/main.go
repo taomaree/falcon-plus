@@ -69,7 +69,10 @@ func main() {
 	go http.Start()
 
 	hostname, _ := g.Hostname()
-	fmt.Println("hostname: ", hostname)
+	if os.Getenv("ENDPOINT") == "" {
+		os.Setenv("ENDPOINT", hostname)
+	}
+	fmt.Println("endpoint: ", hostname)
 
 	select {}
 

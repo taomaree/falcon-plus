@@ -65,6 +65,10 @@ func DeviceMetrics() (L []*model.MetricValue) {
 		if du.FsVfstype == "iso9660" {
 			continue
 		}
+		
+		if du.FsVfstype == "squashfs" {
+			continue
+		}
 
 		diskTotal += du.BlocksAll
 		diskUsed += du.BlocksUsed
